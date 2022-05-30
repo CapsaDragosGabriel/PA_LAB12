@@ -11,30 +11,30 @@ public class MyTestFramework {
     public static void main(String[] args) {
         String url = "E:/AN2/ProiectePA/Lab2/target/classes/";
         String className = "Compulsory";
-        Class aClass;
-
+        Class clazz = null;
         try {
             URL classUrl = new URL("file:///" + url);
             URLClassLoader ucl = new URLClassLoader(new URL[]{classUrl});
-            aClass = ucl.loadClass(className);
+            clazz = ucl.loadClass(className);
         } catch (MalformedURLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            System.out.println("oops, class not found");
         }
-        extractMethods(aClass);
+        assert clazz != null;
+        extractMethods(clazz);
         try {
-            invokeStatic(aClass);
+            invokeStatic(clazz);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void extractMethods(Class aClass) {
-        for (Method method : aClass.getMethods()) {
+    public static void extractMethods(Class clazz) {
+        for (Method method : clazz.getMethods()) {
             System.out.print(method.getReturnType() + " " + method.getName() + "(");
             boolean type = true;
             for (Parameter parameter : method.getParameters()) {
                 if (type) {
-                    System.out.print(parameter.getType()+ " " + parameter.getName());
+                    System.out.print(parameter.getType() + " " + parameter.getName());
                     type = false;
                 } else {
                     System.out.print(", " + parameter.getType() + " " + parameter.getName());
@@ -44,8 +44,8 @@ public class MyTestFramework {
         }
     }
 
-    public static void invokeStatic(Class aClass) {
-        Method[] methods = aClass.getMethods();
+    public static void invokeStatic(Class clazz) {
+        Method[] methods = clazz.getMethods();
         for (Method method : methods) {
             if (method.isAnnotationPresent(Test.class)) {
                 try {
